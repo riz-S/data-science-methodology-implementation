@@ -1,0 +1,19 @@
+body {
+  margin: 2rem 0;
+}
+
+p {
+  margin-bottom: 2rem;
+}
+
+form > .field {
+  margin-bottom: 2rem !important;
+}
+
+.field > label {
+  font-size: 1.2rem !important;
+}
+
+.field > .radio {
+  padding-top: 1.2rem;
+}

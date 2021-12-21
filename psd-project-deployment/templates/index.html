@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Web Phising Prediction</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="{{url_for('static', filename='css/style.css')}}"
+    />
+  </head>
+  <body class="ui container">
+    <h1 class="ui header">Web Phising Prediction</h1>
+    <p>Silahkan masukkan data yang sesuai dengan website Anda</p>
+
+    <form class="ui form" action="/predict" method="POST">
+      <div class="field">
+        <div class="three fields">
+          <div class="field">
+            <label>SFH (Server Form Handler)</label>
+            <div class="field">
+              <div class="ui radio checkbox">
+                <input type="radio" name="sfh" value="-1" id="sfh-blank" />
+                <label for="sfh-blank">About:blank atau kosong</label>
+              </div>
+            </div>
+            <div class="field">
+              <div class="ui radio checkbox">
+                <input type="radio" name="sfh" value="0" id="sfh-redirect" />
+                <label for="sfh-redirect">Redirect ke halaman lain</label>
+              </div>
+            </div>
+            <div class="field">
+              <div class="ui radio checkbox">
+                <input type="radio" name="sfh" value="1" id="sfh-else" />
+                <label for="sfh-else">Tidak keduanya</label>
+              </div>
+            </div>
+          </div>
+          <div class="field">
+            <label>PopUpWindow</label>
+            <div class="field">
+              <div class="ui radio checkbox">
+                <input type="radio" name="puw" value="-1" id="puw-disabled" />
+                <label for="puw-disabled">Klik kanan disabled</label>
+              </div>
+            </div>
+            <div class="field">
+              <div class="ui radio checkbox">
+                <input type="radio" name="puw" value="0" id="puw-alert" />
+                <label for="puw-alert">Klik kanan menampilkan alert</label>
+              </div>
+            </div>
+            <div class="field">
+              <div class="ui radio checkbox">
+                <input type="radio" name="puw" value="1" id="puw-else" />
+                <label for="puw-else">Tidak keduanya</label>
+              </div>
+            </div>
+          </div>
+          <div class="field">
+            <label>SSLfinal_State</label>
+            <div class="field">
+              <div class="ui radio checkbox">
+                <input
+                  type="radio"
+                  name="ssl_final_state"
+                  value="1"
+                  id="sfs-legit"
+                />
+                <label for="sfs-legit"
+                  >Memakai https, trusted issuer, dan age >= 2 years</label
+                >
+              </div>
+            </div>
+            <div class="field">
+              <div class="ui radio checkbox">
+                <input
+                  type="radio"
+                  name="ssl_final_state"
+                  value="0"
+                  id="sfs-suspicious"
+                />
+                <label for="sfs-suspicious"
+                  >Memakai https, not trusted issuer</label
+                >
+              </div>
+            </div>
+            <div class="field">
+              <div class="ui radio checkbox">
+                <input
+                  type="radio"
+                  name="ssl_final_state"
+                  value="-1"
+                  id="sfs-phishy"
+                />
+                <label for="sfs-phishy">Tidak keduanya</label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="field">
+        <div class="three fields">
+          <div class="field">
+            <label>Persentase Request URL</label>
+            <div class="ui right labeled input">
+              <input
+                type="number"
+                name="req_url"
+                placeholder="Masukkan persentase request URL..."
+              />
+              <div class="ui basic label">%</div>
+            </div>
+          </div>
+          <div class="field">
+            <label>Persentase URL Anchor</label>
+            <div class="ui right labeled input">
+              <input
+                type="number"
+                name="url_of_anchor"
+                placeholder="Masukkan persentase anchor URL..."
+              />
+              <div class="ui basic label">%</div>
+            </div>
+          </div>
+          <div class="field">
+            <label>Ranking Traffic Website</label>
+            <input
+              type="number"
+              name="rank"
+              placeholder="Masukkan ranking traffic website..."
+            />
+          </div>
+        </div>
+      </div>
+      <div class="field">
+        <div class="three fields">
+          <div class="field">
+            <label>Panjang URL</label>
+            <input
+              type="number"
+              name="url_length"
+              placeholder="Masukkan panjang URL"
+            />
+          </div>
+          <div class="field">
+            <label>Umur Domain</label>
+            <div class="ui right labeled input">
+              <input
+                type="number"
+                name="age_of_domain"
+                placeholder="Masukkan umur domain..."
+              />
+              <div class="ui basic label">bulan</div>
+            </div>
+          </div>
+          <div class="field">
+            <label>Menggunakan Alamat IP</label>
+            <div class="field">
+              <div class="ui radio checkbox">
+                <input type="radio" name="ip_address" value="0" id="ip-phishy" />
+                <label for="ip-phishy">Ya</label>
+              </div>
+            </div>
+            <div class="field">
+              <div class="ui radio checkbox">
+                <input
+                  type="radio"
+                  name="ip_address"
+                  value="1"
+                  id="ip-legit"
+                />
+                <label for="ip-legit">Tidak</label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="field">
+        <button class="ui primary button" type="submit">Prediksi</button>
+      </div>
+      {% if prediction_DS and prediction_RF and prediction_SVM %}
+      <div class="ui info message">
+        <div class="header">Hasil Prediksi</div>
+        <ul class="list">
+          <li>
+            Random Forest Classifier : <strong>{{ prediction_DS }}</strong>
+          </li>
+          <li>
+            Decision Tree Classifier : <strong>{{ prediction_RF }}</strong>
+          </li>
+          <li>Support Vector Classifier : <strong>{{ prediction_SVM }}</strong></li>
+        </ul>
+      </div>
+      {% endif %}
+    </form>
+    <script
+      src="https://code.jquery.com/jquery-3.6.0.min.js"
+      integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+      crossorigin="anonymous"
+    ></script>
+    <script src="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.js"></script>
+    <script>
+      $(".ui.form").form({
+        fields: {
+          age_of_domain: "empty",
+          url_length: "empty",
+          req_url: "empty",
+          rank: "empty",
+          url_of_anchor: "empty",
+          ip_address: "checked",
+          ssl_final_state: "checked",
+          puw: "checked",
+          sfh: "checked",
+        },
+      });
+    </script>
+  </body>
+</html>
